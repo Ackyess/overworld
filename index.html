@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="支持拖动、滚轮和双指捏合观看的 Three.js 画中世界展览。"
+    />
+    <meta name="theme-color" content="#000000" />
+    <title>Parallax Archive — 画中世界</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main id="app">
+      <div id="stage" aria-hidden="true"></div>
+
+      <div class="interface" inert>
+        <header class="masthead">
+          <div class="brand">
+            <strong>PARALLAX<br />ARCHIVE</strong>
+            <span>ORBITAL VIEWPOINTS / 001</span>
+          </div>
+        </header>
+
+        <nav class="controls" aria-label="一次性展览控制">
+          <button
+            id="next"
+            type="button"
+            aria-label="浏览完成，进入下一幅作品"
+          >
+            <span class="next-label" aria-hidden="true">NEXT</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </nav>
+
+        <output
+          id="active-world-status"
+          class="sr-only"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >作品 1 / 7</output>
+
+        <p id="interaction-hint" class="hint">
+          拖动观察 · 滚轮 / 双指缩放
+        </p>
+
+        <div id="completion" hidden>
+          <strong>THANKS FOR WATCHING</strong>
+          <span>感谢观看 · 刷新页面可再次浏览</span>
+        </div>
+      </div>
+
+      <div id="loading" role="status">
+        <span>BUILDING VIEWPOINTS</span>
+        <div><i id="load-progress"></i></div>
+        <output id="load-value">0%</output>
+      </div>
+
+      <noscript>此 Demo 需要启用 JavaScript。</noscript>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
