@@ -3612,7 +3612,7 @@ function queueAnimationFrame() {
 }
 
 function updateGalleryNavigation(delta) {
-  if (!advancing && currentPortal) {
+  if (currentPortal) {
     const orbitDirection =
       Number(navigationKeys.has("KeyD")) -
       Number(navigationKeys.has("KeyA"));
@@ -3814,7 +3814,7 @@ document.addEventListener("visibilitychange", () => {
 
 nextButton.addEventListener("click", () => void advanceExhibition());
 stage.addEventListener("pointerdown", (event) => {
-  if (advancing || !currentPortal) return;
+  if (!currentPortal) return;
   if (event.pointerType === "touch") {
     touchPointers.set(event.pointerId, {
       x: event.clientX,
@@ -3937,7 +3937,7 @@ stage.addEventListener("pointermove", (event) => {
 stage.addEventListener(
   "wheel",
   (event) => {
-    if (advancing || !currentPortal) return;
+    if (!currentPortal) return;
     event.preventDefault();
     const pixelDelta =
       event.deltaY *
