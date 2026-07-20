@@ -1,4 +1,4 @@
-# Parallax Archive
+# Overworld
 
 An experimental Three.js gallery in which each picture frame acts as a fixed
 window into a real-time 3D world.
@@ -48,4 +48,3 @@ and attribution requirements, documented beside each asset under
 `public/assets/`. Assets without an explicit redistribution license are
 provided only as part of this project; their public availability does not grant
 reuse rights.
-

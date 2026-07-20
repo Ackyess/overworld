@@ -418,6 +418,7 @@ let advancing = false;
 const navigationKeys = new Set();
 const touchPointers = new Map();
 let pointerDrag = null;
+let touchDrag = null;
 let touchGesture = null;
 let galleryOrbitAngle = 0;
 let galleryOrbitTarget = 0;
@@ -3768,8 +3769,20 @@ function beginTouchGesture() {
   };
 }
 
+function beginTouchDrag(pointerId, x, y) {
+  touchDrag = {
+    id: pointerId,
+    x,
+    y,
+    orbitTarget: galleryOrbitTarget,
+    pitchTarget: galleryPitchTarget,
+    radiusTarget: galleryRadiusTarget,
+  };
+}
+
 function resetPointerNavigation() {
   pointerDrag = null;
+  touchDrag = null;
   touchGesture = null;
   touchPointers.clear();
   stage.classList.remove("is-dragging");
@@ -3808,8 +3821,15 @@ stage.addEventListener("pointerdown", (event) => {
       y: event.clientY,
     });
     stage.setPointerCapture?.(event.pointerId);
-    if (touchPointers.size === 2) beginTouchGesture();
-    else if (touchPointers.size > 2) touchGesture = null;
+    if (touchPointers.size === 1) {
+      beginTouchDrag(event.pointerId, event.clientX, event.clientY);
+    } else if (touchPointers.size === 2) {
+      touchDrag = null;
+      beginTouchGesture();
+    } else {
+      touchDrag = null;
+      touchGesture = null;
+    }
     event.preventDefault();
     return;
   }
@@ -3853,6 +3873,24 @@ stage.addEventListener("pointermove", (event) => {
           Math.max(touchGesture.distance * GALLERY_PINCH_RANGE, 48),
         ),
       );
+    } else if (touchPointers.size === 1) {
+      if (touchDrag?.id !== event.pointerId) {
+        beginTouchDrag(event.pointerId, event.clientX, event.clientY);
+      }
+      applyViewInput(
+        touchDrag.orbitTarget,
+        touchDrag.pitchTarget,
+        touchDrag.radiusTarget,
+        normalizedGestureInput(
+          touchDrag.x - event.clientX,
+          Math.max(window.innerWidth * GALLERY_DRAG_RANGE, 120),
+        ),
+        normalizedGestureInput(
+          event.clientY - touchDrag.y,
+          Math.max(window.innerHeight * GALLERY_DRAG_RANGE, 120),
+        ),
+        0,
+      );
     }
     event.preventDefault();
     return;
@@ -3878,8 +3916,17 @@ stage.addEventListener("pointermove", (event) => {
   stage.addEventListener(eventName, (event) => {
     if (event.pointerType === "touch") {
       if (!touchPointers.delete(event.pointerId)) return;
-      if (touchPointers.size === 2) beginTouchGesture();
-      else touchGesture = null;
+      if (touchPointers.size === 2) {
+        touchDrag = null;
+        beginTouchGesture();
+      } else if (touchPointers.size === 1) {
+        touchGesture = null;
+        const [remainingId, remaining] = touchPointers.entries().next().value;
+        beginTouchDrag(remainingId, remaining.x, remaining.y);
+      } else {
+        touchDrag = null;
+        touchGesture = null;
+      }
       return;
     }
     if (event.pointerId !== pointerDrag?.id) return;
